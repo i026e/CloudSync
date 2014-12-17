@@ -2,7 +2,7 @@
 from collections import namedtuple
 
 class Cloud(object):
-    File = namedtuple('File', ['name', 'size', 'mtime', 'ctime'])
+    File = namedtuple('File', ['name','id', 'size', 'mtime', 'ctime'])
 
     # list directory on server
     def ls(self, folder):

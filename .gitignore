@@ -4,4 +4,5 @@ __pycache__
 *.o
 secrets/*.pyc
 secrets/*.py
+secrets/*.json
 .idea/*

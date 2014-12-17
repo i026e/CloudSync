@@ -14,3 +14,20 @@ http://mysite.example.com
 https://mysite.example.com
 Click the Create client ID button.
 In the API Access pane, locate the section Client ID for web applications and note or copy the Client ID and Client secret that you will need later to run the sample:
+
+
+Drive API
+
+sudo pip3 install --upgrade oauth2client
+sudo pip3 install --upgrade google-api-python-client
+
+sudo pip2 install --upgrade oauth2client
+sudo pip2 install --upgrade google-api-python-client
+
+
+pip install git+https://github.com/enorvelle/GoogleApiPython3x.git
+
+
+openssl pkcs12 -in *.p12 -nodes -nocerts > privatekey.pem
+Enter Import Password:
+MAC verified OK

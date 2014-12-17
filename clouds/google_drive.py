@@ -1,4 +1,11 @@
 #encoding:UTF-8
+import httplib2
+#from oauth2client.client import flow_from_clientsecrets
+from oauth2client.file import Storage
+from clouds.GoogleApiPython3x.apiclient.discovery import build
+import sys
+import os.path
+
 from clouds.cloud import Cloud
 from http_request import request
 
@@ -6,25 +13,42 @@ import base64
 import xml.etree.cElementTree as xml
 from io import StringIO, BytesIO
 
-class GoogleDrive(Cloud):
-    webdav_url = "www.googleapis.com/drive/v2"
-    def __init__(self, token=None, user=None, pwd=None):
-        auth = ''
-        if token:
-            auth = 'OAuth %s' % token
-        elif user and pwd:
-            b_auth = bytes('%s:%s' % (user, pwd), 'UTF-8')
-            auth = 'Basic %s' % base64.b64encode(b_auth).decode('UTF-8')
-        else:
-            raise Exception()
+from oauth2client.client import SignedJwtAssertionCredentials, flow_from_clientsecrets
 
-        self.request = request(self.webdav_url, auth)
+
+REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
+
+SCOPES = [
+          'https://www.googleapis.com/auth/drive.file',
+          ]
+
+"""
+'https://www.googleapis.com/auth/drive.metadata.readonly',
+'https://www.googleapis.com/auth/drive.readonly',
+'https://www.googleapis.com/auth/drive.appdata',
+'https://www.googleapis.com/auth/drive'
+"""
+class GoogleDrive(Cloud):
+    url = "www.googleapis.com/drive/v2"
+
+
+
+    def __init__(self, secret_json_file):
+
+        credential_file = secret_json_file + '.cred'
+        if not os.path.isfile(credential_file):
+             self.initial_auth(secret_json_file, credential_file)
+
+        self.drive_service = self.get_build_service(secret_json_file, credential_file)
+
+        result = self.drive_service.children().list(folderId="root").execute()
+        print(result)
 
     # list directory on server
-    def ls(self, folder):
+    def ls(self, folder="root"):
         self.request.set_headers('folder_status')
         print(self.request.all_headers['Authorization'])
-        resp = self.request.send_request('PROPFIND', '/%s' % folder)
+        resp = self.request.send_request('GET', '/files' )
         resp_data = xml.fromstring(resp['data']) #.parse(BytesIO(resp['data']))
         return [self.elem2file(elem) for elem in resp_data.findall('{DAV:}response')]
 
@@ -87,3 +111,26 @@ class GoogleDrive(Cloud):
     def prop(self, elem, name, default=None):
         child = elem.find('.//{DAV:}' + name)
         return default if child is None else child.text
+
+    def initial_auth(self, secret_json, credfile):
+        flow = flow_from_clientsecrets(secret_json, 'https://www.googleapis.com/auth/drive', REDIRECT_URI)
+        authorize_url = flow.step1_get_authorize_url()
+        print('Go to the following link in your browser: \n' + authorize_url)
+        code = input('Enter verification code: ').strip()
+        credentials = flow.step2_exchange(code)
+        storage = Storage(credfile)
+        storage.put(credentials)
+        print("All finished initializing, run again")
+        sys.exit()
+
+    def get_build_service(self, secret_json_file, credential_file):
+        storage = Storage(credential_file)
+        creds = storage.get()
+        flow = flow_from_clientsecrets(secret_json_file,SCOPES)
+
+        http = httplib2.Http()
+        http = creds.authorize(http)
+        return build('drive', 'v2', http=http)
+
+
+
