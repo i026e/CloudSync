@@ -1,0 +1,34 @@
+b'<?xml version=\'1.0\' encoding=\'utf8\'?>\n
+<ns0:multistatus xmlns:ns0="DAV:"><ns0:response><ns0:href>/
+</ns0:href><ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status>
+<ns0:prop><ns0:resourcetype><ns0:collection /></ns0:resourcetype>
+<ns0:getlastmodified>Wed, 04 Apr 2012 20:00:00 GMT</ns0:getlastmodified>
+<ns0:displayname>disk</ns0:displayname><ns0:creationdate>2012-04-04T20:00:00Z</ns0:creationdate>
+</ns0:prop></ns0:propstat></ns0:response><ns0:response><ns0:href>/Photo/</ns0:href><ns0:propstat>
+<ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype><ns0:collection /></ns0:resourcetype>
+<ns0:getlastmodified>Wed, 10 Apr 2013 03:36:12 GMT</ns0:getlastmodified>
+<ns0:displayname>Photo</ns0:displayname><ns0:creationdate>2013-04-10T03:36:12Z</ns0:creationdate></ns0:prop>
+</ns0:propstat></ns0:response><ns0:response><ns0:href>/eyadisk/</ns0:href><ns0:propstat>
+<ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype><ns0:collection />
+</ns0:resourcetype><ns0:getlastmodified>Fri, 12 Dec 2014 06:28:45 GMT</ns0:getlastmodified>
+<ns0:displayname>eyadisk</ns0:displayname><ns0:creationdate>2014-12-12T06:28:45Z</ns0:creationdate>
+</ns0:prop></ns0:propstat></ns0:response><ns0:response>
+<ns0:href>/%D0%94%D0%BE%D0%BA%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B/</ns0:href>
+<ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype>
+<ns0:collection /></ns0:resourcetype><ns0:getlastmodified>Wed, 10 Apr 2013 03:30:36 GMT</ns0:getlastmodified>
+<ns0:displayname>\xd0\x94\xd0\xbe\xd0\xba\xd1\x83\xd0\xbc\xd0\xb5\xd0\xbd\xd1\x82\xd1\x8b</ns0:displayname>
+<ns0:creationdate>2013-04-10T03:30:36Z</ns0:creationdate></ns0:prop></ns0:propstat></ns0:response>
+<ns0:response><ns0:href>/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/</ns0:href><ns0:propstat>
+<ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype><ns0:collection /></ns0:resourcetype>
+<ns0:getlastmodified>Tue, 30 Sep 2014 06:42:18 GMT</ns0:getlastmodified>
+<ns0:displayname>\xd0\x97\xd0\xb0\xd0\xb3\xd1\x80\xd1\x83\xd0\xb7\xd0\xba\xd0\xb8</ns0:displayname>
+<ns0:creationdate>2013-05-28T02:44:09Z</ns0:creationdate>
+</ns0:prop></ns0:propstat></ns0:response><ns0:response>
+<ns0:href>/%D0%9C%D1%83%D0%B7%D1%8B%D0%BA%D0%B0/</ns0:href>
+<ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype>
+<ns0:collection /></ns0:resourcetype><ns0:getlastmodified>Wed, 10 Apr 2013 03:30:36 GMT</ns0:getlastmodified>
+<ns0:displayname>\xd0\x9c\xd1\x83\xd0\xb7\xd1\x8b\xd0\xba\xd0\xb0</ns0:displayname>
+<ns0:creationdate>2013-04-10T03:30:36Z</ns0:creationdate></ns0:prop></ns0:propstat></ns0:response>
+<ns0:response><ns0:href>/2009</ns0:href><ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop>
+<ns0:resourcetype /><ns0:getlastmodified>Wed, 10 Apr 2013 03:43:04 GMT</ns0:getlastmodified>
+<ns0:getetag>d41d8cd98f00b204e9800998ecf8427e</ns0:getetag><ns0:getcontenttype>text/plain</ns0:getcontenttype><ns0:getcontentlength>0</ns0:getcontentlength><ns0:displayname>2009</ns0:displayname><ns0:creationdate>2013-04-10T03:43:04Z</ns0:creationdate></ns0:prop></ns0:propstat></ns0:response><ns0:response><ns0:href>/%D0%94%D0%BE%D0%B1%D1%80%D0%BE%20%D0%9F%D0%BE%D0%B6%D0%B0%D0%BB%D0%BE%D0%B2%D0%B0%D1%82%D1%8C.pdf</ns0:href><ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype /><ns0:getlastmodified>Wed, 10 Apr 2013 03:30:36 GMT</ns0:getlastmodified><ns0:getetag>2bf4a775cdaffe827bbad4998b9b09eb</ns0:getetag><ns0:getcontenttype>application/pdf</ns0:getcontenttype><ns0:getcontentlength>455833</ns0:getcontentlength><ns0:displayname>\xd0\x94\xd0\xbe\xd0\xb1\xd1\x80\xd0\xbe \xd0\x9f\xd0\xbe\xd0\xb6\xd0\xb0\xd0\xbb\xd0\xbe\xd0\xb2\xd0\xb0\xd1\x82\xd1\x8c.pdf</ns0:displayname><ns0:creationdate>2013-04-10T03:30:36Z</ns0:creationdate></ns0:prop></ns0:propstat></ns0:response><ns0:response><ns0:href>/%D0%9E%D0%B1%D0%BE%D0%B8%20%D0%B4%D0%BB%D1%8F%20%D1%80%D0%B0%D0%B1%D0%BE%D1%87%D0%B5%D0%B3%D0%BE%20%D1%81%D1%82%D0%BE%D0%BB%D0%B0.jpg</ns0:href><ns0:propstat><ns0:status>HTTP/1.1 200 OK</ns0:status><ns0:prop><ns0:resourcetype /><ns0:getlastmodified>Wed, 10 Apr 2013 03:30:36 GMT</ns0:getlastmodified><ns0:getetag>798a4e6b30ef77cb72055f63e02515e5</ns0:getetag><ns0:getcontenttype>image/jpeg</ns0:getcontenttype><ns0:getcontentlength>937311</ns0:getcontentlength><ns0:displayname>\xd0\x9e\xd0\xb1\xd0\xbe\xd0\xb8 \xd0\xb4\xd0\xbb\xd1\x8f \xd1\x80\xd0\xb0\xd0\xb1\xd0\xbe\xd1\x87\xd0\xb5\xd0\xb3\xd0\xbe \xd1\x81\xd1\x82\xd0\xbe\xd0\xbb\xd0\xb0.jpg</ns0:displayname><ns0:creationdate>2013-04-10T03:30:36Z</ns0:creationdate></ns0:prop></ns0:propstat></ns0:response></ns0:multistatus>'
