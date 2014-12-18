@@ -18,18 +18,19 @@ from oauth2client.client import flow_from_clientsecrets
 
 
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
-
-SCOPES = ['https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive']
+GOOGLE_DIR_MTYPE = 'application/vnd.google-apps.folder'
+SCOPES = ['https://www.googleapis.com/auth/drive']
 
 """
+'https://www.googleapis.com/auth/drive.file'
 'https://www.googleapis.com/auth/drive.metadata.readonly',
 'https://www.googleapis.com/auth/drive.readonly',
 'https://www.googleapis.com/auth/drive.appdata',
 'https://www.googleapis.com/auth/drive'
 """
-GOOGLE_DIR_MTYPE = 'application/vnd.google-apps.folder'
+
 class GoogleDrive(Cloud):
-    url = "www.googleapis.com/drive/v2"
+    #url = "www.googleapis.com/drive/v2"
 
 
 
