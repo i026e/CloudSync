@@ -2,7 +2,9 @@ __pycache__
 *.DS_Store
 *.pyc
 *.o
+temp_files/*
 secrets/*.pyc
 secrets/*.py
 secrets/*.json
+secrets/*.cred
 .idea/*

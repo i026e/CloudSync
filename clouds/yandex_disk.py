@@ -1,14 +1,18 @@
-#encoding:UTF-8
-from clouds.cloud import Cloud
-from http_request import request
-
 import base64
 import xml.etree.cElementTree as xml
+
+from cloud import Cloud
+from utils import http_request, get_json_from_file, File
+
 
 
 class YandexDisk(Cloud):
     webdav_url = "webdav.yandex.ru"
-    def __init__(self, token=None, user=None, pwd=None):
+    def __init__(self, credfile):
+        creds = get_json_from_file(credfile)
+        token, user, pwd =creds.get("token"), creds.get("user"), creds.get("pwd")
+
+
         auth = ''
         if token:
             auth = 'OAuth %s' % token
@@ -18,7 +22,8 @@ class YandexDisk(Cloud):
         else:
             raise Exception()
 
-        self.request = request(self.webdav_url, auth)
+        self.request = http_request(self.webdav_url, auth)
+        self.last_id = 0
 
     # list directory on server
     def ls(self, folder):
@@ -26,6 +31,7 @@ class YandexDisk(Cloud):
         print(self.request.all_headers['Authorization'])
         resp = self.request.send_request('PROPFIND', '/%s' % folder)
         resp_data = xml.fromstring(resp['data']) #.parse(BytesIO(resp['data']))
+        #print(xml.tostring(resp_data, encoding='utf8', method='xml'))
         return [self.elem2file(elem) for elem in resp_data.findall('{DAV:}response')]
 
     # download file from server
@@ -77,12 +83,16 @@ class YandexDisk(Cloud):
 
 
     def elem2file(self, elem):
-        return self.File(
-            self.prop(elem, 'href'),
-            int(self.prop(elem, 'getcontentlength', 0)),
-            self.prop(elem, 'getlastmodified', ''),
-            self.prop(elem, 'creationdate', ''),
-        )
+        name = self.prop(elem, 'href')
+        id = self.last_id
+        mtype = self.prop(elem, 'getcontenttype', File.DIRECTORY_MTYPE)
+        size = int(self.prop(elem, 'getcontentlength', 0))
+        mtime = self.prop(elem, 'getlastmodified', '')
+        ctime = self.prop(elem, 'creationdate', '')
+
+        self.last_id += 1
+        return File(id, name, mtype, size, mtime, ctime)
+
 
     def prop(self, elem, name, default=None):
         child = elem.find('.//{DAV:}' + name)

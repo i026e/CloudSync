@@ -28,7 +28,7 @@ import sys
 IGNORE = set(['.hg', 'httplib2', 'oauth2', 'simplejson', 'static'])
 
 # In addition to the above files also ignore these files and directories when
-# copying over samples into the snapshot.
+# copying over samplesmmmmmmmmmmmmm into the snapshot.
 IGNORE_IN_SAMPLES = set(['apiclient', 'oauth2client', 'uritemplate'])
 
 parser = argparse.ArgumentParser(description=__doc__)

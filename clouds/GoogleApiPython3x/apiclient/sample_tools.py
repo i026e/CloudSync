@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utilities for making samples.
+"""Utilities for making samples
 
 Consolidates a lot of code commonly repeated in sample applications.
 """
@@ -32,11 +32,11 @@ from oauth2client import tools
 
 
 def init(argv, name, version, doc, filename, scope=None, parents=[]):
-  """A common initialization routine for samples.
+  """A common initialization routine for samplesmmmmmmmmmmmmm.
 
   Many of the sample applications do the same initialization, which has now
   been consolidated into this function. This function uses common idioms found
-  in almost all the samples, i.e. for an API with name 'apiname', the
+  in almost all the samplesmmmmmmmmmmmmm, i.e. for an API with name 'apiname', the
   credentials are stored in a file named apiname.dat, and the
   client_secrets.json file is stored in the same directory as the application
   main file.

@@ -1,7 +1,14 @@
 #encoding:UTF-8
 import http.client as httplib
+import json
 
-class request():
+
+def get_json_from_file(filename):
+    with open(filename,'r') as f:
+        s = f.read()
+        return json.loads(s, encoding='utf-8')
+
+class http_request():
     headers = {}
     url = ''
     all_headers = {'Accept': '*/*',
@@ -52,3 +59,14 @@ class request():
         headers = response.getheaders()
         conn.close()
         return {'status':status, 'data':data, 'headers':headers }
+
+
+class File():
+    DIRECTORY_MTYPE = "directory"
+    def __init__(self, id, name, mtype, size, mtime, ctime):
+        self.id = id
+        self.name = name
+        self.mtype = mtype
+        self.size = size
+        self.mtime = mtime
+        self.ctime = ctime

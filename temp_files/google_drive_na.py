@@ -3,15 +3,11 @@ import httplib2
 #from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from clouds.GoogleApiPython3x.apiclient.discovery import build
-import sys
 import os.path
 
-from clouds.cloud import Cloud
-from http_request import request
+from cloud import Cloud
 
-import base64
 import xml.etree.cElementTree as xml
-from io import StringIO, BytesIO
 
 from oauth2client.client import SignedJwtAssertionCredentials, flow_from_clientsecrets
 
