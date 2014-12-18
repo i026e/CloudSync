@@ -2,7 +2,7 @@ import base64
 import xml.etree.cElementTree as xml
 
 from cloud import Cloud
-from utils import http_request, get_json_from_file, File
+from utils import http_request,File, get_json_from_file, split_filepath
 
 
 
@@ -43,6 +43,9 @@ class YandexDisk(Cloud):
 
     # upload file to server
     def upload(self, local_file, remote_file):
+        folders, filename = split_filepath(remote_file)
+        if len(folders) > 0:
+            self.mkdir(folders)
         f = open(local_file, 'rb')
         data = f.read()
         self.request.set_headers('upload', len(data))
@@ -81,33 +84,11 @@ class YandexDisk(Cloud):
 
     # create dirs on server (aka mkdir -p)
     def mkdir(self, path):
-        dirs = [d for d in path.split('/') if d]
-        if not dirs:
-            return
-        if path.startswith('/'):
-            dirs[0] = '/' + dirs[0]
-        old_cwd = self.cwd
-        try:
-            for dir in dirs:
-                self.mkdir_dir(dir)
-                self.cd(dir)
-        finally:
-            self.cd(old_cwd)
-
-    # helper for mkdirs - make path on server
-    def cd(self, path):
-        path = path.strip()
-        if not path:
-            return
-        stripped_path = '/'.join(part for part in path.split('/') if part) + '/'
-        if stripped_path == '/':
-            self.cwd = stripped_path
-        elif path.startswith('/'):
-            self.cwd = '/' + stripped_path
-        else:
-            self.cwd += stripped_path
-
-
+        dirs = path.strip('/').split('/')
+        path = ''
+        for i in range(len(dirs)):
+            path = path + '/' + dirs[i]
+            self.mkdir_dir(path)
 
 
     def elem2file(self, elem):

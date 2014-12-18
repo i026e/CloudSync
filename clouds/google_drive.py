@@ -83,9 +83,11 @@ class GoogleDrive(Cloud):
                 if content is not None:
                     with open(local_file, 'wb') as f:
                         f.write(content)
+                        return local_file
 
             except errors.HttpError as error:
                 print( 'An error occurred: %s' % error)
+        return None
 
 
 
@@ -112,12 +114,12 @@ class GoogleDrive(Cloud):
                 # Uncomment the following line to print the File ID
                 # print 'File ID: %s' % file['id']
 
-                #return file
+                return 0
             except errors.HttpError as error:
                 print('An error occured: %s' % error)
                 #return None
 
-
+        return 1
 
     # delete file or directory on  server
     def delete(self, filepath):
@@ -125,8 +127,10 @@ class GoogleDrive(Cloud):
         if file_id is not None:
             try:
                 self.drive_service.files().delete(fileId=file_id).execute()
+                return 0
             except errors.HttpError as error:
                 print('An error occurred: %s' % error)
+        return 1
 
     # create directories on  server (aka mkdir -p)
     def mkdir(self, path):
@@ -146,8 +150,9 @@ class GoogleDrive(Cloud):
                         if cache_dir['children'] is None: cache_dir['children'] = {}
                         cache_dir['children'][directory] = new_cache_dict
                     else:
-                        break
+                        return 1
                 cache_dir=cache_dir['children'][directory]
+        return 0
 
     # Code from Google example
     def download_file(self, drive_file):

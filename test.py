@@ -11,8 +11,8 @@ def main():
 
     #print(api.ls('/Photo'))
 
-    api.mkdir('eyadisk/333/4444/555')
-    #api.upload('./README.md', '/eyadisk/README.MD')
+    api.mkdir('/eyadisk/t/t/t/t/t/t')
+    #api.upload('./README.md', '/eyadisk222/rrrr/README.MD')
     #print(api.publish('/eyadisk/README.MD'))
 
     #gdrive = GDrive.GoogleDrive('./secrets/google.json')
