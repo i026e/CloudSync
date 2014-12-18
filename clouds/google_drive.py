@@ -109,10 +109,44 @@ class GoogleDrive(Cloud):
         resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
 
     # create directory on  server
-    def mkdir(self, folder):
-        self._set_headers('common')
-        resp = self.request.send_request('MKCOL', '/%s' % folder)
+    def mkdir(self, path):
+        dirs = path.strip('/').split('/')
 
+        # Check if path exists and update cache for max deepness
+        if self.get_path_id(path) is None:
+            cache_dir = self.dirs_cache
+            for directory in dirs:
+                print('Trying to create folder \\' +directory)
+                if cache_dir['children'] is None or directory not in cache_dir['children']:
+                    response = self.create_dir(cache_dir['id'], directory)
+                    if response is not None:
+                        id = response.get('id')
+                        new_cache_dict = self.get_new_cache_level(id)
+
+                        if cache_dir['children'] is None: cache_dir['children'] = {}
+                        cache_dir['children'][directory] = new_cache_dict
+                    else:
+                        break
+                cache_dir=cache_dir['children'][directory]
+
+
+
+
+    def create_dir(self, parentId, folder_name):
+        body = {
+            'title': folder_name,
+            'mimeType': GOOGLE_DIR_MTYPE,
+            'parents' : [{'id':parentId}]
+        }
+        try:
+            result = self.drive_service.files().insert(body=body).execute()
+            return result
+        except errors.HttpError as error:
+            print('An error occured: %s' % error)
+            return None
+
+    # return id for last folder in path or None if
+    # path does not exist
     def get_path_id(self, path):
         #remove first and last slashes and split
         path_list = path.strip('/').split('/')
@@ -130,6 +164,7 @@ class GoogleDrive(Cloud):
                 return None
         return curr_dir_id
 
+    # return dict of folders that are inside given one
     def get_children_dirs(self, folderId):
         dirs = {}
 
@@ -149,6 +184,7 @@ class GoogleDrive(Cloud):
 
         return dirs
 
+    # calls callback function for each chunk of files obj (include folders)
     def get_children_files(self, callback, params={}):
         page_token = None
         while True:
@@ -185,9 +221,9 @@ class GoogleDrive(Cloud):
         return default if child is None else child.text
 
 
-
+    # User needs to open link in web browser to get secret code
     def initial_auth(self, secret_json, credfile):
-        flow = flow_from_clientsecrets(secret_json, 'https://www.googleapis.com/auth/drive', REDIRECT_URI)
+        flow = flow_from_clientsecrets(secret_json, SCOPES, REDIRECT_URI)
         authorize_url = flow.step1_get_authorize_url()
         print('Go to the following link in your browser: \n' + authorize_url)
         code = input('Enter verification code: ').strip()
@@ -206,6 +242,6 @@ class GoogleDrive(Cloud):
         http = creds.authorize(http)
         return build('drive', 'v2', http=http)
 
-
+    # creates a new dict that needed to store caches of brunches of directory tree
     def get_new_cache_level(self, id, children=None):
         return {'id':id, 'children':children}

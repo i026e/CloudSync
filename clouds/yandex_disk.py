@@ -71,12 +71,12 @@ class YandexDisk(Cloud):
 
     # unpublish file
     def unpublish(self, path):
-        self._set_headers('common')
+        self.request.set_headers('common')
         resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
 
     # create directory on  server
     def mkdir(self, folder):
-        self._set_headers('common')
+        self.request.set_headers('common')
         resp = self.request.send_request('MKCOL', '/%s' % folder)
 
 

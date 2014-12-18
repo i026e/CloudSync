@@ -8,6 +8,14 @@ def get_json_from_file(filename):
         s = f.read()
         return json.loads(s, encoding='utf-8')
 
+# split path to folders and filename by last /
+def split_filepath(filepath):
+    last_slash_ind = filepath.rfind('/')
+    folders = ''
+    if last_slash_ind >= 0:
+        folders = filepath[:last_slash_ind]
+    return folders, filepath[last_slash_ind+1:]
+
 class http_request():
     headers = {}
     url = ''
