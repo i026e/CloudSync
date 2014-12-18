@@ -1,8 +1,6 @@
 #encoding:UTF-8
-from collections import namedtuple
 
 class Cloud(object):
-    File = namedtuple('File', ['name','id', "mtype",'size', 'mtime', 'ctime'])
 
     # list directory on server
     def ls(self, folder):
@@ -20,42 +18,7 @@ class Cloud(object):
     def delete(self, remote_file):
         raise NotImplementedError()
 
-    # publish file
-    def publish(self, path):
+    # create directory on  server (aka mkdir -p)
+    def mkdir(self, path):
         raise NotImplementedError()
 
-    # unpublish file
-    def unpublish(self, path):
-        raise NotImplementedError()
-
-    # create directory on  server
-    def mkdir(self, folder):
-        raise NotImplementedError()
-
-    # create dirs on server (aka mkdir -p)
-    def mkdirs(self, path):
-        dirs = [d for d in path.split('/') if d]
-        if not dirs:
-            return
-        if path.startswith('/'):
-            dirs[0] = '/' + dirs[0]
-        old_cwd = self.cwd
-        try:
-            for dir in dirs:
-                self.mkdir(dir)
-                self.cd(dir)
-        finally:
-            self.cd(old_cwd)
-
-    # helper for mkdirs - make path on server
-    def cd(self, path):
-        path = path.strip()
-        if not path:
-            return
-        stripped_path = '/'.join(part for part in path.split('/') if part) + '/'
-        if stripped_path == '/':
-            self.cwd = stripped_path
-        elif path.startswith('/'):
-            self.cwd = '/' + stripped_path
-        else:
-            self.cwd += stripped_path

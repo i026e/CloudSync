@@ -72,15 +72,7 @@ class GoogleDrive(Cloud):
 
     # download file from server
     def download(self, remote_file, local_file):
-        folder, filename = split_filepath(remote_file)
-
-        # Trying to get fileid
-        file_id = None
-        files = self.ls(folder)
-        for file in files:
-            if file.name == filename:
-                file_id = file.id
-                break
+        file_id = self.get_file_id(remote_file)
 
         if file_id is not None:
             print('Downloading '+ remote_file)
@@ -127,32 +119,13 @@ class GoogleDrive(Cloud):
 
 
     # delete file or directory on  server
-    def delete(self, file):
-        folder, filename = split_filepath(remote_file)
-        folder_id = self.get_folder_id(folder)
-
-        self.request.set_headers('common')
-        resp = self.request.send_request('DELETE', '/%s' % file)
-
-    # publish file
-    def publish(self, path):
-        self.request.set_headers('common')
-        resp = self.request.send_request('POST', '/%s' % path + '?publish')
-        if resp['status'] != 302:
-            raise Exception('Wtf?')
-        location = ''
-        for key, v in resp['headers']:
-            if key == 'location':
-                location = v
-                break
-        return location
-
-
-
-    # unpublish file
-    def unpublish(self, path):
-        self._set_headers('common')
-        resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
+    def delete(self, filepath):
+        file_id = self.get_file_id(filepath)
+        if file_id is not None:
+            try:
+                self.drive_service.files().delete(fileId=file_id).execute()
+            except errors.HttpError as error:
+                print('An error occurred: %s' % error)
 
     # create directories on  server (aka mkdir -p)
     def mkdir(self, path):
@@ -272,6 +245,17 @@ class GoogleDrive(Cloud):
                 print('An error occurred: %s' % error)
                 break
 
+    def get_file_id(self, filepath):
+        folder, filename = split_filepath(filepath)
+
+        # Trying to get fileid
+        file_id = None
+        files = self.ls(folder)
+        for file in files:
+            if file.name == filename:
+                file_id = file.id
+                break
+        return file_id
 
     def elem2file(self, elem):
         id = elem.get('id', None)
