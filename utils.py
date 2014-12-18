@@ -12,7 +12,7 @@ def get_json_from_file(filename):
 def split_filepath(filepath):
     last_slash_ind = filepath.rfind('/')
     folders = ''
-    if last_slash_ind >= 0:
+    if last_slash_ind > 0:
         folders = filepath[:last_slash_ind]
     return folders, filepath[last_slash_ind+1:]
 

@@ -73,14 +73,28 @@ class GoogleDrive(Cloud):
     # download file from server
     def download(self, remote_file, local_file):
         folder, filename = split_filepath(remote_file)
-        folder_id = self.get_folder_id(folder)
-        if folder_id is not None:
-            pass
 
-        self.request.set_headers('download')
-        resp = self.request.send_request('GET', '/%s' % remote_file)
-        with open(local_file, 'wb') as f:
-            f.write(resp['data'])
+        # Trying to get fileid
+        file_id = None
+        files = self.ls(folder)
+        for file in files:
+            if file.name == filename:
+                file_id = file.id
+                break
+
+        if file_id is not None:
+            print('Downloading '+ remote_file)
+            try:
+                file = self.drive_service.files().get(fileId=file_id).execute()
+                content = self.download_file(file)
+                if content is not None:
+                    with open(local_file, 'wb') as f:
+                        f.write(content)
+
+            except errors.HttpError as error:
+                print( 'An error occurred: %s' % error)
+
+
 
     # upload file to server
     def upload(self, local_file, remote_file):
@@ -161,7 +175,29 @@ class GoogleDrive(Cloud):
                         break
                 cache_dir=cache_dir['children'][directory]
 
+    # Code from Google example
+    def download_file(self, drive_file):
+        """Download a file's content.
 
+          Args:
+            service: Drive API service instance.
+            drive_file: Drive File instance.
+
+          Returns:
+            File's content if successful, None otherwise.
+        """
+        download_url = drive_file.get('downloadUrl')
+        if download_url:
+            resp, content = self.drive_service._http.request(download_url)
+            if resp.status == 200:
+                print('Status: %s' % resp)
+                return content
+            else:
+                print('An error occurred: %s' % resp)
+                return None
+        else:
+            # The file doesn't have any content stored on Drive.
+            return None
 
 
     def create_dir(self, parentId, folder_name):
@@ -180,6 +216,8 @@ class GoogleDrive(Cloud):
     # return id for last folder in path or None if
     # path does not exist
     def get_folder_id(self, path):
+        if path == '' or path == '/':
+            return 'root'
         #remove first and last slashes and split
         path_list = path.strip('/').split('/')
 
@@ -236,9 +274,9 @@ class GoogleDrive(Cloud):
 
 
     def elem2file(self, elem):
-        id = elem.get('id', 0)
+        id = elem.get('id', None)
         name = elem.get('title', '')
-        orig_name = elem.get('originalFilename', '')
+        #orig_name = elem.get('originalFilename', '')
         mtype = elem.get('mimeType', '')
         size = int(elem.get('fileSize', 0))
         mtime = elem.get('modifiedDate', '')
@@ -247,11 +285,6 @@ class GoogleDrive(Cloud):
         if mtype == GOOGLE_DIR_MTYPE:
             mtype = File.DIRECTORY_MTYPE
         return File(id, name, mtype, size, mtime, ctime)
-
-    def prop(self, elem, name, default=None):
-        child = elem.find('.//{DAV:}' + name)
-        return default if child is None else child.text
-
 
     # User needs to open link in web browser to get secret code
     def initial_auth(self, secret_json, credfile):

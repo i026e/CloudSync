@@ -25,8 +25,8 @@ def main():
     #
     # print(gdrive.dirs_cache)
     #gdrive.mkdir('ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn')
-    gdrive.upload('/home/pavel/workspace/CloudsSync/README.md', 'ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn/README.md')
-
+    #gdrive.upload('/home/pavel/workspace/CloudsSync/README.md', 'ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn/README.md')
+    gdrive.download('Обои для рабочего стола.jpg', './2009')
 
 if __name__ == '__main__':
 	main()
