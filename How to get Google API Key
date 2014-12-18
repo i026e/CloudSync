@@ -1,0 +1,15 @@
+To create a client ID and client secret
+go to https://console.developers.google.com
+
+Create new project, enter a project name (such as "GDrive Sync").
+After a project is created, click the project name to open its properties.
+
+From left menu select "APIs & auth", "APIs".
+Select Drive API from APIs list and turn it on
+
+Now select "Credentials" from left menu
+Press "create new Client ID"
+In the Client ID Settings section, do the following:
+Select Installed application for the Application type.
+Select Other Installed application type.
+Download json file.
