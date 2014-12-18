@@ -24,7 +24,8 @@ def main():
     #     print(f.name+' '+f.mtype)
     #
     # print(gdrive.dirs_cache)
-    gdrive.mkdir('ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn')
+    #gdrive.mkdir('ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn')
+    gdrive.upload('/home/pavel/workspace/CloudsSync/README.md', 'ervwrbrbtrthnrnryn22/rberbtybetb/rebtbetytnt5n/tb4t4tn4yn4yn/README.md')
 
 
 if __name__ == '__main__':

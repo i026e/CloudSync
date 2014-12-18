@@ -4,11 +4,13 @@ import httplib2
 from oauth2client.file import Storage
 from clouds.GoogleApiPython3x.apiclient import errors
 from clouds.GoogleApiPython3x.apiclient.discovery import build
+from clouds.GoogleApiPython3x.apiclient.http import MediaFileUpload
+
 import sys
 import os.path
 
 from cloud import Cloud
-from utils import File
+from utils import File, split_filepath
 
 import xml.etree.cElementTree as xml
 
@@ -17,7 +19,7 @@ from oauth2client.client import flow_from_clientsecrets
 
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
-SCOPES = ['https://www.googleapis.com/auth/drive.file',]
+SCOPES = ['https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive']
 
 """
 'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -51,7 +53,7 @@ class GoogleDrive(Cloud):
 
     # list directory on server
     def ls(self, folder):
-        folderId = self.get_path_id(folder)
+        folderId = self.get_folder_id(folder)
         files = []
 
         def callback(children):
@@ -70,6 +72,11 @@ class GoogleDrive(Cloud):
 
     # download file from server
     def download(self, remote_file, local_file):
+        folder, filename = split_filepath(remote_file)
+        folder_id = self.get_folder_id(folder)
+        if folder_id is not None:
+            pass
+
         self.request.set_headers('download')
         resp = self.request.send_request('GET', '/%s' % remote_file)
         with open(local_file, 'wb') as f:
@@ -77,14 +84,39 @@ class GoogleDrive(Cloud):
 
     # upload file to server
     def upload(self, local_file, remote_file):
-        f = open(local_file, 'rb')
-        data = f.read()
-        self.request.set_headers('upload', len(data))
-        resp = self.request.send_request('PUT', remote_file, data)
-        f.close()
+        folder, filename = split_filepath(remote_file)
+        self.mkdir(folder)
+
+        folder_id = self.get_folder_id(folder)
+        if folder_id is not None:
+            print('Uploading '+ local_file)
+            mtype = '*/*'
+            media_body = MediaFileUpload(filename, resumable=True, mimetype=mtype)
+
+            body = {
+                'title': filename,
+                'mimeType': mtype,
+                'parents': [{'id':folder_id}]
+                }
+
+            try:
+                file = self.drive_service.files().insert(body=body, media_body=media_body).execute()
+
+                # Uncomment the following line to print the File ID
+                # print 'File ID: %s' % file['id']
+
+                #return file
+            except errors.HttpError as error:
+                print('An error occured: %s' % error)
+                #return None
+
+
 
     # delete file or directory on  server
     def delete(self, file):
+        folder, filename = split_filepath(remote_file)
+        folder_id = self.get_folder_id(folder)
+
         self.request.set_headers('common')
         resp = self.request.send_request('DELETE', '/%s' % file)
 
@@ -108,12 +140,12 @@ class GoogleDrive(Cloud):
         self._set_headers('common')
         resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
 
-    # create directory on  server
+    # create directories on  server (aka mkdir -p)
     def mkdir(self, path):
         dirs = path.strip('/').split('/')
 
         # Check if path exists and update cache for max deepness
-        if self.get_path_id(path) is None:
+        if self.get_folder_id(path) is None:
             cache_dir = self.dirs_cache
             for directory in dirs:
                 print('Trying to create folder \\' +directory)
@@ -147,7 +179,7 @@ class GoogleDrive(Cloud):
 
     # return id for last folder in path or None if
     # path does not exist
-    def get_path_id(self, path):
+    def get_folder_id(self, path):
         #remove first and last slashes and split
         path_list = path.strip('/').split('/')
 
@@ -230,8 +262,8 @@ class GoogleDrive(Cloud):
         credentials = flow.step2_exchange(code)
         storage = Storage(credfile)
         storage.put(credentials)
-        print("All finished initializing, run again")
-        sys.exit()
+        #print("All finished initializing, run again")
+
 
     def get_build_service(self, secret_json_file, credential_file):
         storage = Storage(credential_file)

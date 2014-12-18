@@ -4,7 +4,7 @@ __pycache__
 *.o
 *.json
 *.cred
-temp_files/*.*
+temp_files/*
 secrets/*.py
 
 .idea/*
