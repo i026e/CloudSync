@@ -47,9 +47,11 @@ class transloader():
         result = self.source.download(src_file_path, temp_file_name)
 
         if result is not None:
+            print(src_file_path)
             self.dest.upload(temp_file_name, src_file_path)
             try:
-                os.remove(temp_file_name)
+                #os.remove(temp_file_name)
+                pass
             except:
                 pass
         else:

@@ -13,7 +13,7 @@ def main():
     gdrive = GDrive.GoogleDrive('./secrets/google.json', '/eyadisk')
 
     trans = transloader(ya_disk, gdrive)
-    gdrive.upload('./README.md', '/aaaaa/README.md')
+    gdrive.upload('./README.md', 'README.MD')
 
 
     #trans.transload(utils.conflict_resolver.REPLACE)

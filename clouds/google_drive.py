@@ -95,7 +95,7 @@ class GoogleDrive(Cloud):
         if folder_id is not None:
             print('Uploading '+ local_file)
             mtype = '*/*'
-            media_body = MediaFileUpload(filename, resumable=True, mimetype=mtype)
+            media_body = MediaFileUpload(local_file, resumable=True, mimetype=mtype)
 
             body = {
                 'title': filename,
