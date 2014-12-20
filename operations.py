@@ -50,8 +50,8 @@ class transloader():
             print(src_file_path)
             self.dest.upload(temp_file_name, src_file_path)
             try:
-                #os.remove(temp_file_name)
-                pass
+                os.remove(temp_file_name)
+                
             except:
                 pass
         else:
