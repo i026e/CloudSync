@@ -1,21 +1,28 @@
-__author__ = 'pavel'
+#encoding:UTF-8
 
 #import sys
 #sys.path.append('clouds')
 import clouds.yandex_disk as YaDisk
 import clouds.google_drive as GDrive
+import utils
+from operations import transloader
 
 def main():
 
-    api = YaDisk.YandexDisk('./secrets/yandex.json')
+    ya_disk = YaDisk.YandexDisk('./secrets/yandex.json', '/eyadisk')
+    gdrive = GDrive.GoogleDrive('./secrets/google.json', '/eyadisk')
 
-    #print(api.ls('/Photo'))
+    trans = transloader(ya_disk, gdrive)
+    gdrive.upload('./README.md', '/aaaaa/README.md')
 
-    api.mkdir('/eyadisk/t/t/t/t/t/t')
-    #api.upload('./README.md', '/eyadisk222/rrrr/README.MD')
+
+    #trans.transload(utils.conflict_resolver.REPLACE)
+
+    #api.mkdir('/eyadisk/t/t/t/t/t/t')
+    #api._upload_('./README.md', '/eyadisk222/rrrr/README.MD')
     #print(api.publish('/eyadisk/README.MD'))
 
-    #gdrive = GDrive.GoogleDrive('./secrets/google.json')
+    #
     # files = gdrive.ls('/Documents/')
     # for f in files:
     #     print(f.name+' '+f.mtype)

@@ -51,9 +51,3 @@ The API is pretty much self-explanatory:
     delete(path)
     publish(path)
     unpublish(path)
-
-pip3 install --upgrade
-httplib2
-oauth2client
-google-api-python-client
-python-dateutil

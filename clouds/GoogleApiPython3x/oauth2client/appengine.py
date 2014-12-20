@@ -429,10 +429,10 @@ class StorageByKeyName(Storage):
     the given key is in the datastore.
     """
     if self._is_ndb():
-      ndb.Key(self._model, self._key_name).delete()
+      ndb.Key(self._model, self._key_name)._delete_()
     else:
       entity_key = db.Key.from_path(self._model.kind(), self._key_name)
-      db.delete(entity_key)
+      db._delete_(entity_key)
 
   def locked_get(self):
     """Retrieve Credential from datastore.
@@ -472,7 +472,7 @@ class StorageByKeyName(Storage):
     """Delete Credential from datastore."""
 
     if self._cache:
-      self._cache.delete(self._key_name)
+      self._cache._delete_(self._key_name)
 
     self._delete_entity()
 
