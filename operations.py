@@ -1,18 +1,32 @@
 #encoding:UTF-8
 import os
-from utils import conflict_resolver, find_index, rand_str
+from utils import conflict_resolver, find_index, rand_str, error_codes
+
+ERROR_MESSAGES = {'fold':'folder exists: ',
+                  'file':'file exists: ',
+                  'down':'error while downloading file: ',
+                  'up':'error while uploading file: ',
+                  'local_rm':'error while removing local file: '}
 
 class transloader():
-    def __init__(self, source_cloud, dest_cloud):
+    def __init__(self, source_cloud, dest_cloud,temp_dir = './temp'):
         self.source = source_cloud
         self.dest = dest_cloud
-
-
-    def transload(self, confl_resol_method, temp_dir = './temp'):
         if not os.path.exists(temp_dir):
             os.makedirs(temp_dir)
         self.temp_dir = temp_dir
-        self.log_file = os.path.join(temp_dir, 'log')
+        self.log_file = os.path.join(temp_dir, 'errors.log')
+
+        log_head = """
+***
+Source: %s; Home: %s
+Destination: %s; Home: %s
+"""
+        self.log(log_head %(source_cloud.__class__.__name__, source_cloud.home_folder,
+                            dest_cloud.__class__.__name__, dest_cloud.home_folder))
+
+
+    def transload(self, confl_resol_method):
         conf_resolver = conflict_resolver(confl_resol_method)
 
         directories = ['/']
@@ -32,31 +46,32 @@ class transloader():
             for src_f_path, src_f in src_files:
                 # check if folder with such name exists
                 if src_f_path in dst_dirs:
-                    self.log("Folder with name " + src_f_path)
+                    self.log(ERROR_MESSAGES['fold'] + src_f_path)
                 else:
                     # check if file exists
                     index = find_index(dst_files_pathes, src_f_path)
                     # proceed if file does not exist or by conflict resolver allow
                     if index is None or conf_resolver.should_replace(dst_files[index][1], src_f):
-                        print(index)
                         self.copy_file(src_f_path)
+                    else:
+                        self.log(ERROR_MESSAGES['file'] + src_f_path)
 
     def copy_file(self, src_file_path):
         temp_file_name = os.path.join(self.temp_dir, rand_str())
 
         result = self.source.download(src_file_path, temp_file_name)
 
-        if result is not None:
-            print(src_file_path)
-            self.dest.upload(temp_file_name, src_file_path)
+        if result is None:
+            self.log(ERROR_MESSAGES['down'] + src_file_path)
+        else:
+            result = self.dest.upload(temp_file_name, src_file_path)
+            if result != error_codes.OK:
+                self.log(ERROR_MESSAGES['up'] + src_file_path)
+
             try:
                 os.remove(temp_file_name)
-
             except:
-                pass
-        else:
-            self.log(src_file_path)
-
+                self.log(ERROR_MESSAGES['local_rm'] + temp_file_name)
 
     def get_child_dirs_files(self, cloud, curr_dir):
         dirs = []
@@ -70,8 +85,11 @@ class transloader():
             else:
                 files.append((path,element))
         return dirs, files
+
     def log(self, text):
-        print(text)
+        with open(self.log_file, 'a') as lf:
+            lf.write(text+'\n')
+
 
 
 class uploader():

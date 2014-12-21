@@ -2,13 +2,12 @@ import base64
 import xml.etree.cElementTree as xml
 
 from cloud import Cloud
-from utils import http_request,File, get_json_from_file, split_filepath, url_decode, url_encode
+from utils import *
 
 
 
 class YandexDisk(Cloud):
     webdav_url = "webdav.yandex.ru"
-    date_format =  "%a, %d %b %Y %H:%M:%S %Z"
 
     def __init__(self, credfile, home_folder=''):
         super(YandexDisk, self).__init__(home_folder)
@@ -35,7 +34,6 @@ class YandexDisk(Cloud):
     def _ls_(self, folder):
         folder = url_encode(folder)
         self.request.set_headers('folder_status')
-        print(self.request.all_headers['Authorization'])
         try:
             resp = self.request.send_request('PROPFIND', '/%s' % folder)
             resp_data = xml.fromstring(resp['data'])
@@ -73,6 +71,10 @@ class YandexDisk(Cloud):
         resp = self.request.send_request('PUT', remote_file, data)
         f.close()
 
+        if resp['status'] == 201:
+            return error_codes.OK
+        return error_codes.ERROR
+
     # delete file or directory on  server
     def _delete_(self, file):
         file = url_encode(file)
@@ -80,32 +82,46 @@ class YandexDisk(Cloud):
 
         resp = self.request.send_request('DELETE', '/%s' % file)
 
-    # publish file
-    def _publish_(self, path):
-        path = url_encode(path)
-        self.request.set_headers('common')
-        resp = self.request.send_request('POST', '/%s' % path + '?publish')
-        if resp['status'] != 302:
-            raise Exception('Wtf?')
-        location = ''
-        for key, v in resp['headers']:
-            if key == 'location':
-                location = v
-                break
-        return location
+        # By documentation server must return 200 "OK", but also can get 204 "No Content".
+        # Anyway file or directory have been removed.
+        if resp['status'] in [200, 204]:
+            return error_codes.OK
+        return error_codes.ERROR
 
-
-    # unpublish file
-    def _unpublish_(self, path):
-        path = url_encode(path)
-        self.request.set_headers('common')
-        resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
+    # Not used
+    # # publish file
+    # def _publish_(self, path):
+    #     path = url_encode(path)
+    #     self.request.set_headers('common')
+    #     resp = self.request.send_request('POST', '/%s' % path + '?publish')
+    #     if resp['status'] != 302:
+    #         raise Exception('Wtf?')
+    #     location = ''
+    #     for key, v in resp['headers']:
+    #         if key == 'location':
+    #             location = v
+    #             break
+    #     return location
+    #
+    #
+    # # unpublish file
+    # def _unpublish_(self, path):
+    #     path = url_encode(path)
+    #     self.request.set_headers('common')
+    #     resp = self.request.send_request('POST', '/%s' % path + '?unpublish')
 
     # create directory on  server
     def _mkdir_dir_(self, folder):
         folder = url_encode(folder)
         self.request.set_headers('common')
         resp = self.request.send_request('MKCOL', '/%s' % folder)
+
+        # possible "good" statuses
+        # 201
+        # 405 Path already exists
+        if resp['status'] in [201, 405]:
+            return error_codes.OK
+        return error_codes.ERROR
 
 
     # create dirs on server (aka mkdir -p)
@@ -115,7 +131,10 @@ class YandexDisk(Cloud):
         path = ''
         for i in range(len(dirs)):
             path = path + '/' + dirs[i]
-            self._mkdir_dir_(path)
+            result = self._mkdir_dir_(path)
+            if result != error_codes.OK:
+                return error_codes.ERROR
+        return error_codes.OK
 
 
     def _elem2file_(self, elem):

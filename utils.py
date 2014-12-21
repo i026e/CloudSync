@@ -153,3 +153,7 @@ class conflict_resolver():
         return new_file.is_bigger_than(orig_file)
     def keep_newest(self, orig_file, new_file):
         return new_file.is_newer_than(orig_file)
+
+class error_codes():
+    OK = 0
+    ERROR = 1

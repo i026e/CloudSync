@@ -1,6 +1,5 @@
 #encoding:UTF-8
 import httplib2
-#from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from clouds.GoogleApiPython3x.apiclient import errors
 from clouds.GoogleApiPython3x.apiclient.discovery import build
@@ -10,7 +9,7 @@ import sys
 import os.path
 
 from cloud import Cloud
-from utils import File, split_filepath
+from utils import File, split_filepath, error_codes
 
 import xml.etree.cElementTree as xml
 
@@ -59,7 +58,7 @@ class GoogleDrive(Cloud):
 
         if folderId is not None:
             param = {}
-            param['q'] = "'%s' in parents" % folderId
+            param['q'] = "'%s' in parents and trashed = false" % folderId
             param['fields'] = 'items(createdDate,fileSize,id,mimeType,modifiedDate,originalFilename,title)'
             self._get_children_files_(callback, param)
 
@@ -71,7 +70,6 @@ class GoogleDrive(Cloud):
         file_id = self._get_file_id_(remote_file)
 
         if file_id is not None:
-            print('Downloading '+ remote_file)
             try:
                 file = self.drive_service.files().get(fileId=file_id).execute()
                 content = self._download_file_(file)
@@ -93,7 +91,6 @@ class GoogleDrive(Cloud):
 
         folder_id = self._get_folder_id_(folder)
         if folder_id is not None:
-            print('Uploading '+ local_file)
             mtype = '*/*'
             media_body = MediaFileUpload(local_file, resumable=True, mimetype=mtype)
 
@@ -109,12 +106,12 @@ class GoogleDrive(Cloud):
                 # Uncomment the following line to print the File ID
                 # print 'File ID: %s' % file['id']
 
-                return 0
+                return error_codes.OK
             except errors.HttpError as error:
                 print('An error occured: %s' % error)
                 #return None
 
-        return 1
+        return error_codes.ERROR
 
     # delete file or directory on  server
     def _delete_(self, filepath):
@@ -122,10 +119,10 @@ class GoogleDrive(Cloud):
         if file_id is not None:
             try:
                 self.drive_service.files()._delete_(fileId=file_id).execute()
-                return 0
+                return error_codes.OK
             except errors.HttpError as error:
                 print('An error occurred: %s' % error)
-        return 1
+        return error_codes.ERROR
 
 
 
@@ -137,7 +134,6 @@ class GoogleDrive(Cloud):
         if self._get_folder_id_(path) is None:
             cache_dir = self.dirs_cache
             for directory in dirs:
-                print('Trying to create folder /' +directory)
                 if cache_dir['children'] is None or directory not in cache_dir['children']:
                     response = self._create_dir_(cache_dir['id'], directory)
                     if response is not None:
@@ -147,9 +143,9 @@ class GoogleDrive(Cloud):
                         if cache_dir['children'] is None: cache_dir['children'] = {}
                         cache_dir['children'][directory] = new_cache_dict
                     else:
-                        return 1
+                        return error_codes.ERROR
                 cache_dir=cache_dir['children'][directory]
-        return 0
+        return error_codes.OK
 
     # Code from Google example
     def _download_file_(self, drive_file):

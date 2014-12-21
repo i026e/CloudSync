@@ -11,22 +11,32 @@ class Cloud(object):
             self.home_folder = '/'
 
     #public methods
+    # list content of folder
     def ls(self, folder):
-        return self._ls_(self.full_path(folder))
+        return self._ls_(self._full_path_(folder))
+
     # download file from server
     def download(self, remote_file, local_file):
-        return self._download_(self.full_path(remote_file), local_file)
+        print("Downloading " + remote_file + " to " + local_file)
+        return self._download_(self._full_path_(remote_file), local_file)
+
     # upload file to server
     def upload(self, local_file, remote_file):
-        return self._upload_(local_file, self.full_path(remote_file))
+        print("Uploading " + local_file + " to " + remote_file)
+        return self._upload_(local_file, self._full_path_(remote_file))
+
     # delete file or directory on  server
     def delete(self, remote_file):
-        return self._delete_(self.full_path(remote_file))
+        print("Removing " + remote_file)
+        return self._delete_(self._full_path_(remote_file))
+
     # create directory on  server (aka mkdir -p)
     def mkdir(self, path):
-        return self._mkdir_(self.full_path(path))
+        print("Making directory " + path)
+        return self._mkdir_(self._full_path_(path))
 
-    def full_path(self, path):
+
+    def _full_path_(self, path):
         return self.home_folder + path.strip('/')
 
     #private methods to be  implemented
