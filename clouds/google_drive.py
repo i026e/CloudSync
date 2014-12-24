@@ -1,19 +1,22 @@
 #encoding:UTF-8
 import httplib2
+from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from clouds.GoogleApiPython3x.apiclient import errors
 from clouds.GoogleApiPython3x.apiclient.discovery import build
 from clouds.GoogleApiPython3x.apiclient.http import MediaFileUpload
 
-import sys
 import os.path
 
 from cloud import Cloud
 from utils import File, split_filepath, error_codes
 
-import xml.etree.cElementTree as xml
+# There is no official Google Api for Python 3
+# and httplib2 has a bug with byte strings processing
+# so I keep them locally for now
+PORTABLE = True
 
-from oauth2client.client import flow_from_clientsecrets
+
 
 
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'

@@ -126,10 +126,11 @@ class File():
 
 
 class conflict_resolver():
-    SKIP = 0
-    REPLACE = 1
-    KEEP_LARGEST = 2
-    KEEP_NEWEST = 3
+    SKIP = 0 # keep original file
+    REPLACE = 1 # always replace
+    KEEP_LARGEST = 2 # replace only if new file is larger
+    KEEP_NEWEST = 3 # replace only if new file is newer
+    KEEP_LARGES_AND_NEWEST = 4
 
     def __init__(self, method):
         #associate methods with functions
@@ -137,7 +138,8 @@ class conflict_resolver():
             self.SKIP : self.skip,
             self.REPLACE : self.replace,
             self.KEEP_LARGEST : self.keep_largest,
-            self.KEEP_NEWEST : self.keep_newest
+            self.KEEP_NEWEST : self.keep_newest,
+            self.KEEP_LARGES_AND_NEWEST: self.keep_large_and_new
         }
         # assign desired method to handler
         self.handler = options.get(method, self.REPLACE)
@@ -153,6 +155,8 @@ class conflict_resolver():
         return new_file.is_bigger_than(orig_file)
     def keep_newest(self, orig_file, new_file):
         return new_file.is_newer_than(orig_file)
+    def keep_large_and_new(self, orig_file, new_file):
+        return self.keep_largest(orig_file, new_file) and self.keep_newest(orig_file, new_file)
 
 class error_codes():
     OK = 0

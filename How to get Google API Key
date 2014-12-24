@@ -12,4 +12,4 @@ Press "create new Client ID"
 In the Client ID Settings section, do the following:
 Select Installed application for the Application type.
 Select Other Installed application type.
-Download json file.
+Download json file and copy it to ./secrets folder.
